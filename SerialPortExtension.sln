@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortExtensionTest", "SerialPortExtensionTest\SerialPortExtensionTest.csproj", "{27824C2F-4BD4-467B-A2C9-6C0616E37933}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortExtension", "SerialPortExtension\SerialPortExtension.csproj", "{173E0BD9-587E-4571-A34A-63800818CA04}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27824C2F-4BD4-467B-A2C9-6C0616E37933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27824C2F-4BD4-467B-A2C9-6C0616E37933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27824C2F-4BD4-467B-A2C9-6C0616E37933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27824C2F-4BD4-467B-A2C9-6C0616E37933}.Release|Any CPU.Build.0 = Release|Any CPU
+		{173E0BD9-587E-4571-A34A-63800818CA04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{173E0BD9-587E-4571-A34A-63800818CA04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{173E0BD9-587E-4571-A34A-63800818CA04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{173E0BD9-587E-4571-A34A-63800818CA04}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF431ECA-EA57-4B3F-A541-76CCB33ED51F}
+	EndGlobalSection
+EndGlobal
