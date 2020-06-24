@@ -108,7 +108,7 @@ namespace SerialPortExtensionTest
             }
             catch (TimeoutException)
             {
-                Debug.WriteLine($"Received: READ MESSAGE TIMEOUT...");
+                Debug.WriteLine("Received: READ MESSAGE TIMEOUT...");
             }
         }
 

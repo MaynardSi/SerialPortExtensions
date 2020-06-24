@@ -1,14 +1,9 @@
 ﻿using System;
+using Serilog;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
-using System.Data;
-using System.Threading;
 using System.Diagnostics;
-using System.Data.SqlTypes;
-using System.Runtime.CompilerServices;
 
 namespace SerialPortExtension
 {
@@ -21,12 +16,18 @@ namespace SerialPortExtension
         /// Reads the line from the serial port asynchronously.
         /// </summary>
         /// <param name="_serialPort">The serial port.</param>
-        /// <returns></returns>
+        /// <param name="startControlChar">The start control character. Default "\x02".</param>
+        /// <param name="endControlChar">The end control character. Default "\x03".</param>
+        /// <param name="trimResponse">Removes the start and end control characters from the response. Default "true".</param>
+        /// <param name="readLoggingEnabled">Logs the responses sent by the communicating device. Default "true".</param>
+        /// <returns> The response string from the communicating device</returns>
         public static async Task<string> ReadLineAsync(this SerialPort _serialPort,
-            string startControlChar = "\x02", string endControlChar = "\x03")
+            string startControlChar = "\x02", string endControlChar = "\x03",
+            bool trimResponse = false, bool readLoggingEnabled = true)
         {
             byte[] buffer = new byte[1];
-            string response = string.Empty;
+            string responseBuffer = string.Empty;
+            string response = string.Empty;         // The final response to return
 
             // Read available stream per byte and convert to char to be
             // added onto the response string. Once a terminating character
@@ -34,12 +35,21 @@ namespace SerialPortExtension
             while (true)
             {
                 await _serialPort.BaseStream.ReadAsync(buffer, 0, 1).ConfigureAwait(false);
-                response += _serialPort.Encoding.GetString(buffer);
-                Debug.WriteLine($"readLineAsync Resp: {response}");
-
-                if (response.EndsWith(endControlChar))
+                responseBuffer += _serialPort.Encoding.GetString(buffer);
+                if (responseBuffer.EndsWith(_serialPort.NewLine) || responseBuffer.EndsWith(endControlChar))
                 {
-                    return response.Substring(startControlChar.Length, response.Length - (endControlChar.Length + 1));
+                    if (trimResponse)
+                    {
+                        response = response.Substring(startControlChar.Length, response.Length - (endControlChar.Length + 1));
+                    }
+                    else
+                    {
+                        response = responseBuffer;
+                    }
+
+                    if (readLoggingEnabled) { Log.Information("Reading... [{response}]", response); }
+
+                    return response;
                 }
             }
         }
@@ -51,9 +61,13 @@ namespace SerialPortExtension
         /// <param name="toWrite">String to write.</param>
         /// <param name="startControlChar">The start control character. Default "\x02".</param>
         /// <param name="endControlChar">The end control character. Default "\x03".</param>
+        /// <param name="writeLoggingEnabled">Logs the commands to send. Default "true".</param>
         public static async Task WriteLineAsync(this SerialPort _serialPort, string toWrite,
-            string startControlChar = "\x02", string endControlChar = "\x03")
+            string startControlChar = "\x02", string endControlChar = "\x03",
+            bool writeLoggingEnabled = true)
         {
+            if (writeLoggingEnabled) { Log.Information("Writing... [{toWrite}]", toWrite); }
+
             byte[] writeToByte = _serialPort.Encoding.GetBytes(startControlChar + toWrite + endControlChar);
             await _serialPort.BaseStream.WriteAsync(writeToByte, 0, writeToByte.Length).ConfigureAwait(false);
             await _serialPort.BaseStream.FlushAsync().ConfigureAwait(false);
@@ -65,10 +79,27 @@ namespace SerialPortExtension
         /// <param name="command">The command to send to through the port.</param>
         /// <returns>A string response of the given command.</returns>
         public static async Task<string> SendCommandAsync(this SerialPort _serialPort, string command,
-            string startControlChar = "\x02", string endControlChar = "\x03")
+            string startControlChar = "\x02", string endControlChar = "\x03", bool writeLoggingEnabled = true,
+            bool readLoggingEnabled = true, bool trimResponse = false)
         {
-            await _serialPort.WriteLineAsync(command, startControlChar, endControlChar).ConfigureAwait(false);
-            return await _serialPort.ReadLineAsync(startControlChar, endControlChar).ConfigureAwait(false);
+            // Write
+            Task writeTimeoutTask = Task.Delay(_serialPort.WriteTimeout);
+            Task writeLineTask = _serialPort.WriteLineAsync(command, startControlChar, endControlChar, writeLoggingEnabled);
+            Task completedWriteTask = await Task.WhenAny(writeTimeoutTask, writeLineTask);
+            if (completedWriteTask == writeTimeoutTask)
+            {
+                throw new TimeoutException();
+            }
+
+            // Read
+            Task readTimeoutTask = Task.Delay(_serialPort.ReadTimeout);
+            Task<string> readLineTask = _serialPort.ReadLineAsync(startControlChar, endControlChar, trimResponse: trimResponse, readLoggingEnabled: readLoggingEnabled);
+            Task completedReadTask = await Task.WhenAny(readTimeoutTask, readLineTask);
+            if (completedReadTask == readTimeoutTask)
+            {
+                throw new TimeoutException();
+            }
+            return await readLineTask;
         }
 
         /// <summary>
@@ -79,35 +110,17 @@ namespace SerialPortExtension
         /// <param name="delay">The delay between sending commands in Milliseconds. Default: 0</param>
         /// <returns></returns>
         public static async Task<List<string>> SendCommandsAsync(this SerialPort _serialPort, string commands,
-            char delimiter = '&', string startControlChar = "\x02", string endControlChar = "\x03", int delay = 0)
+            char delimiter = '&', string startControlChar = "\x02", string endControlChar = "\x03", int delay = 0,
+            bool writeLoggingEnabled = true, bool readLoggingEnabled = true, bool trimResponse = false)
         {
             List<string> responses = new List<string>();
             foreach (string command in commands.Split(delimiter))
             {
                 await Task.Delay(delay).ConfigureAwait(false);
-                responses.Add(await _serialPort.SendCommandAsync(command, startControlChar, endControlChar).ConfigureAwait(false));
+                responses.Add(await _serialPort.SendCommandAsync(command, startControlChar, endControlChar,
+                    writeLoggingEnabled, readLoggingEnabled, trimResponse).ConfigureAwait(false));
             }
             return responses;
-        }
-
-        /// <summary>
-        /// A generic method for handling timeout exceptions for a given method.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fn">The function to wrap around a try-catch.</param>
-        /// <returns></returns>
-        private static T HandleTimeoutException<T>(Func<T> fn)
-        {
-            T result;
-            try
-            {
-                result = fn();
-            }
-            catch (TimeoutException)
-            {
-                throw;
-            }
-            return result;
         }
     }
 }
