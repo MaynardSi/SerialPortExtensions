@@ -83,22 +83,15 @@ namespace SerialPortExtension
             bool readLoggingEnabled = true, bool trimResponse = false)
         {
             // Write
-            Task writeTimeoutTask = Task.Delay(_serialPort.WriteTimeout);
             Task writeLineTask = _serialPort.WriteLineAsync(command, startControlChar, endControlChar, writeLoggingEnabled);
-            Task completedWriteTask = await Task.WhenAny(writeTimeoutTask, writeLineTask);
-            if (completedWriteTask == writeTimeoutTask)
-            {
-                throw new TimeoutException();
-            }
+            Task writeTimeoutTask = Task.Delay(_serialPort.WriteTimeout);
+            await CheckAsyncTimeout(writeLineTask, writeTimeoutTask);
 
             // Read
-            Task readTimeoutTask = Task.Delay(_serialPort.ReadTimeout);
             Task<string> readLineTask = _serialPort.ReadLineAsync(startControlChar, endControlChar, trimResponse: trimResponse, readLoggingEnabled: readLoggingEnabled);
-            Task completedReadTask = await Task.WhenAny(readTimeoutTask, readLineTask);
-            if (completedReadTask == readTimeoutTask)
-            {
-                throw new TimeoutException();
-            }
+            Task readTimeoutTask = Task.Delay(_serialPort.ReadTimeout);
+            await CheckAsyncTimeout(readLineTask, readTimeoutTask);
+
             return await readLineTask;
         }
 
@@ -121,6 +114,15 @@ namespace SerialPortExtension
                     writeLoggingEnabled, readLoggingEnabled, trimResponse).ConfigureAwait(false));
             }
             return responses;
+        }
+
+        public static async Task CheckAsyncTimeout(Task _task, Task timeoutTask)
+        {
+            Task completedReadTask = await Task.WhenAny(_task, timeoutTask);
+            if (completedReadTask == timeoutTask)
+            {
+                throw new TimeoutException();
+            }
         }
     }
 }
