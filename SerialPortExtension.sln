@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortExtension", "Seri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODValueHelperProject", "ODValueHelperProject\ODValueHelperProject.csproj", "{EB87E8F4-560F-49DD-89D5-D71A5E55952D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SickODValueHelper", "SickODValueHelper\SickODValueHelper.csproj", "{6FC8CE29-5D9C-465E-AACE-74465C9964A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SickODValueHelperTest", "SickODValueHelperTest\SickODValueHelperTest.csproj", "{CDB1C36A-7933-434A-B750-1F0226BA43D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{EB87E8F4-560F-49DD-89D5-D71A5E55952D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB87E8F4-560F-49DD-89D5-D71A5E55952D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB87E8F4-560F-49DD-89D5-D71A5E55952D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FC8CE29-5D9C-465E-AACE-74465C9964A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FC8CE29-5D9C-465E-AACE-74465C9964A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FC8CE29-5D9C-465E-AACE-74465C9964A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FC8CE29-5D9C-465E-AACE-74465C9964A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDB1C36A-7933-434A-B750-1F0226BA43D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDB1C36A-7933-434A-B750-1F0226BA43D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDB1C36A-7933-434A-B750-1F0226BA43D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDB1C36A-7933-434A-B750-1F0226BA43D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

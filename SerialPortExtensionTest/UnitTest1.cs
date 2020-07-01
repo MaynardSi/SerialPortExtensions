@@ -1,23 +1,21 @@
 ﻿using System;
-using SerialPortExtension;
 using System.IO.Ports;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace SerialPortExtensionTest
+namespace SerialPortExtension
 {
     [TestClass]
     public class SerialPortPresenter_DummySerialPort
     {
-        private System.IO.Ports.SerialPort sp1;
-        private System.IO.Ports.SerialPort sp2;
+        private SerialPort sp1;
+        private SerialPort sp2;
         private string response = string.Empty;
         private List<string> responses = new List<string>();
 
-        [TestMethod]
-        public async System.Threading.Tasks.Task TestMethod1Async()
+        public SerialPortPresenter_DummySerialPort()
         {
             sp1 = new SerialPort()
             {
@@ -31,7 +29,6 @@ namespace SerialPortExtensionTest
                 WriteTimeout = 500
             };
             sp1.Open();
-
             sp2 = new SerialPort()
             {
                 PortName = "COM2",
@@ -45,14 +42,18 @@ namespace SerialPortExtensionTest
             };
             sp2.Open();
             sp2.DataReceived += OnDataReceived2;
+        }
 
-            response = await sp1.SendCommandAsync("MEASURE").ConfigureAwait(false);
+        [TestMethod]
+        public void SendCommandTest()
+        {
+            response = sp1.SendCommand("MEASURE", trimResponseControlChars: true);
             Debug.WriteLine($"Resp: {response}");
             Assert.AreEqual(response, "MEASURE");
         }
 
         [TestMethod]
-        public async System.Threading.Tasks.Task SendCommands_TestAsync()
+        public async Task SendCommandsTest()
         {
             List<string> actualResult = new List<string>()
             {
@@ -62,33 +63,33 @@ namespace SerialPortExtensionTest
                 "START_Q2",
                 "STOP_Q2"
             };
-            sp1 = new SerialPort()
+            responses = await sp1.SendCommands("START_MEASURE&STOP_MEASURE&MEASURE&START_Q2&STOP_Q2").ConfigureAwait(false);
+            foreach (string response in responses)
             {
-                PortName = "COM1",
-                BaudRate = 9600,
-                Parity = Parity.None,
-                DataBits = 8,
-                StopBits = StopBits.One,
-                Handshake = Handshake.None,
-                ReadTimeout = 5000,
-                WriteTimeout = 5000
-            };
-            sp1.Open();
+                Debug.WriteLine($"Resp: {response}");
+            }
+            CollectionAssert.AreEqual(responses, actualResult);
+        }
 
-            sp2 = new SerialPort()
+        [TestMethod]
+        public async Task SendCommandAsyncTest()
+        {
+            response = await sp1.SendCommandAsync("MEASURE", trimResponseControlChars: true).ConfigureAwait(false);
+            Debug.WriteLine($"Resp: {response}");
+            Assert.AreEqual(response, "MEASURE");
+        }
+
+        [TestMethod]
+        public async Task SendCommandsAsyncTest()
+        {
+            List<string> actualResult = new List<string>()
             {
-                PortName = "COM2",
-                BaudRate = 9600,
-                Parity = Parity.None,
-                DataBits = 8,
-                StopBits = StopBits.One,
-                Handshake = Handshake.None,
-                ReadTimeout = 5000,
-                WriteTimeout = 5000
+                "START_MEASURE",
+                "STOP_MEASURE",
+                "MEASURE",
+                "START_Q2",
+                "STOP_Q2"
             };
-            sp2.Open();
-            sp2.DataReceived += OnDataReceived2;
-
             responses = await sp1.SendCommandsAsync("START_MEASURE&STOP_MEASURE&MEASURE&START_Q2&STOP_Q2").ConfigureAwait(false);
             foreach (string response in responses)
             {
