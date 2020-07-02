@@ -101,7 +101,7 @@ namespace SickODValueHelper
         }
 
         /// <summary>
-        /// Start continual measurement output
+        /// Start continual measurement output.
         /// </summary>
         public void StartContinuousReadHeight()
         {
@@ -129,7 +129,7 @@ namespace SickODValueHelper
         }
 
         /// <summary>
-        /// Start continual Q2 output
+        /// Start continual Q2 output.
         /// </summary>
         public void StartContinuousQ2Output()
         {
@@ -137,7 +137,7 @@ namespace SickODValueHelper
         }
 
         /// <summary>
-        /// Stop continual Q2 output
+        /// Stop continual Q2 output.
         /// </summary>
         public void StopContinuousQ2Output()
         {
