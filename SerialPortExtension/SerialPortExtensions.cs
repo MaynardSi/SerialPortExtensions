@@ -29,8 +29,8 @@ namespace SerialPortExtension
         public static async Task<string> ReadLineAsync(this SerialPort _serialPort,
             string startControlChar = "\x02",
             string endControlChar = "\x03",
-            bool trimResponseControlChars = false,
-            bool readLoggingEnabled = true)
+            bool trimResponseControlChars = true,
+            bool readLoggingEnabled = false)
         {
             byte[] buffer = new byte[1];
             string responseBuffer = string.Empty;
@@ -75,7 +75,7 @@ namespace SerialPortExtension
             string startControlChar = "\x02",
             string endControlChar = "\x03",
             bool writeControlChar = true,
-            bool writeLoggingEnabled = true
+            bool writeLoggingEnabled = false
             )
         {
             byte[] writeToByte;
@@ -106,9 +106,9 @@ namespace SerialPortExtension
             string startControlChar = "\x02",
             string endControlChar = "\x03",
             bool writeControlChar = true,
-            bool trimResponseControlChars = false,
-            bool writeLoggingEnabled = true,
-            bool readLoggingEnabled = true)
+            bool trimResponseControlChars = true,
+            bool writeLoggingEnabled = false,
+            bool readLoggingEnabled = false)
         {
             // Write
             Task writeLineTask = _serialPort.WriteLineAsync(command, startControlChar, endControlChar,
@@ -136,9 +136,9 @@ namespace SerialPortExtension
             string startControlChar = "\x02",
             string endControlChar = "\x03",
             int delay = 0,
-            bool writeLoggingEnabled = true,
-            bool readLoggingEnabled = true,
-            bool trimResponseControlChars = false)
+            bool writeLoggingEnabled = false,
+            bool readLoggingEnabled = false,
+            bool trimResponseControlChars = true)
         {
             List<string> responses = new List<string>();
             foreach (string command in commands.Split(delimiter))
@@ -173,8 +173,8 @@ namespace SerialPortExtension
         public static string ReadFromBuffer(this SerialPort _serialPort,
             string startControlChar = "\x02",
             string endControlChar = "\x03",
-            bool trimResponseControlChars = false,
-            bool readLoggingEnabled = true)
+            bool trimResponseControlChars = true,
+            bool readLoggingEnabled = false)
         {
             byte[] buffer = new byte[1];
             string responseBuffer = string.Empty;
@@ -210,7 +210,7 @@ namespace SerialPortExtension
             string startControlChar = "\x02",
             string endControlChar = "\x03",
             bool writeControlChar = true,
-            bool writeLoggingEnabled = true)
+            bool writeLoggingEnabled = false)
         {
             byte[] writeToByte;
             if (writeLoggingEnabled) { Log.Information("Writing... [{toWrite}]", toWrite); }
@@ -231,9 +231,9 @@ namespace SerialPortExtension
             string startControlChar = "\x02",
             string endControlChar = "\x03",
             bool writeControlChar = true,
-            bool trimResponseControlChars = false,
-            bool writeLoggingEnabled = true,
-            bool readLoggingEnabled = true
+            bool trimResponseControlChars = true,
+            bool writeLoggingEnabled = false,
+            bool readLoggingEnabled = false
             )
         {
             // Write
@@ -251,9 +251,9 @@ namespace SerialPortExtension
             string startControlChar = "\x02",
             string endControlChar = "\x03",
             int delay = 0,
-            bool writeLoggingEnabled = true,
-            bool readLoggingEnabled = true,
-            bool trimResponseControlChars = false)
+            bool writeLoggingEnabled = false,
+            bool readLoggingEnabled = false,
+            bool trimResponseControlChars = true)
         {
             List<string> responses = new List<string>();
             foreach (string command in commands.Split(delimiter))
