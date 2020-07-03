@@ -11,11 +11,23 @@ namespace SickODValueHelperTest
     [TestClass]
     public class SickODControllerTest
     {
+        private SerialPort sp1;
         private SerialPort sp2;
 
         [TestMethod]
         public void TestMethod1()
         {
+            sp1 = new SerialPort()
+            {
+                PortName = "COM1",
+                BaudRate = 9600,
+                Parity = Parity.None,
+                DataBits = 8,
+                StopBits = StopBits.One,
+                Handshake = Handshake.None,
+                ReadTimeout = 5000,
+                WriteTimeout = 5000
+            };
             sp2 = new SerialPort()
             {
                 PortName = "COM2",
@@ -36,7 +48,7 @@ namespace SickODValueHelperTest
                     "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u4}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day, shared: true)
                 .CreateLogger();
-            IHeightSensorController ODValue = new SickODController();
+            IHeightSensorController ODValue = new SickODController(sp1);
             ODValue.Startup();
             ODValue.Shutdown();
         }

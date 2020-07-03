@@ -13,8 +13,6 @@ namespace SerialPortExtension
     /// </summary>
     public static class SerialPortExtensions
     {
-        //TODO: checks for TimeoutException and IOException and InvalidOperationException
-
         #region Async methods
 
         /// <summary>
@@ -272,6 +270,7 @@ namespace SerialPortExtension
         /// <summary>
         /// Try Catch wrapper for common serial port exceptions for methods
         /// that returns a value.
+        /// HandleSerialPortExceptions(() => fn(params..))
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="fn"></param>
@@ -308,6 +307,7 @@ namespace SerialPortExtension
         /// <summary>
         /// Try Catch wrapper for common serial port exceptions for methods
         /// that does not return a value.
+        /// var x = HandleSerialPortExceptions(() => fn(params..))
         /// </summary>
         /// <param name="fn"></param>
         /// <param name="operation"></param>

@@ -5,13 +5,21 @@ using System.IO.Ports;
 using SerialPortExtension;
 using SickODValueHelper.Utils;
 using System.Diagnostics;
+using System.IO;
+using System.Globalization;
 
 namespace SickODValueHelper
 {
     public class SickODController : IHeightSensorController
     {
         private const string TAG = "SickODValueController";
-        public SerialPort serialPort;
+        private bool writeLogging = true;
+        private bool readLogging = true;
+
+        private string startControlChar = "\x02";
+        private string endControlChar = "\x03";
+
+        private SerialPort serialPort;
         public SerialPort sp2;
 
         public SickODController(SerialPort _serialPort)
@@ -85,13 +93,12 @@ namespace SickODValueHelper
         public bool PingDevice()
         {
             Log.Information("Attempting communication with device...");
-            serialPort.WriteToBuffer("BIT_RATE");
-
             // Start Timer
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            if (string.IsNullOrEmpty(serialPort.ReadFromBuffer()))
+            if (string.IsNullOrEmpty(BaudRateStatus()))
             {
+                Log.Error($"Device not responding correctly. Please check the connection with the device.");
                 return false;
             }
             sw.Stop();
@@ -105,7 +112,10 @@ namespace SickODValueHelper
         /// </summary>
         public void StartContinuousReadHeight()
         {
-            serialPort.SendCommand("START_MEASURE");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("START_MEASURE",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
             // TODO: Threaded buffered reading
             // TODO: Display each line read
         }
@@ -115,7 +125,10 @@ namespace SickODValueHelper
         /// </summary>
         public void StopContinuousReadHeight()
         {
-            serialPort.SendCommand("STOP_MEASURE");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("STOP_MEASURE",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -124,7 +137,13 @@ namespace SickODValueHelper
         /// <returns>Height measurement in millimeters.</returns>
         public double ReadHeight()
         {
-            double.TryParse(serialPort.SendCommand("MEASURE"), out double height);
+            double.TryParse(
+                HandleCommandExceptions(() =>
+                    CheckValidDeviceResponse(() =>
+                        serialPort.SendCommand("MEASURE",
+                        writeLoggingEnabled: writeLogging,
+                        readLoggingEnabled: readLogging))),
+                out double height);
             return height;
         }
 
@@ -133,7 +152,10 @@ namespace SickODValueHelper
         /// </summary>
         public void StartContinuousQ2Output()
         {
-            serialPort.SendCommand("START_Q2");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("START_Q2",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -141,7 +163,10 @@ namespace SickODValueHelper
         /// </summary>
         public void StopContinuousQ2Output()
         {
-            serialPort.SendCommand("STOP_Q2");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("STOP_Q2",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -150,7 +175,10 @@ namespace SickODValueHelper
         /// <returns>Q2 setting in string</returns>
         public string Q2Status()
         {
-            return serialPort.SendCommand("Q2");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("Q2",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -159,7 +187,10 @@ namespace SickODValueHelper
         /// <returns>Q2 Hi setting in string.</returns>
         public string Q2HiStatus()
         {
-            return serialPort.SendCommand("Q2_Hi");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("Q2_Hi",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -168,7 +199,10 @@ namespace SickODValueHelper
         /// <returns>Q2 Lo setting in string.</returns>
         public string Q2LoStatus()
         {
-            return serialPort.SendCommand("Q2_Lo");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("Q2_Lo",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -177,7 +211,10 @@ namespace SickODValueHelper
         /// <param name="measure">Q2_HI 60.000 Set Q2 Hi for example to "60 mm"</param>
         public void SetQ2Hi(double measure)
         {
-            serialPort.SendCommand($"Q2_HI {measure}");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand($"Q2_HI {measure}",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -186,7 +223,10 @@ namespace SickODValueHelper
         /// <param name="measure">Q2_LO 40.000 - Set Q2 Lo for example to "40 mm"</param>
         public void SetQ2Lo(double measure)
         {
-            serialPort.SendCommand($"Q2_LO {measure}");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand($"Q2_LO {measure}",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -194,7 +234,10 @@ namespace SickODValueHelper
         /// </summary>
         public void SetQ2ToDefault()
         {
-            serialPort.SendCommand("Q2_DEFAULT");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("Q2_DEFAULT",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -203,7 +246,10 @@ namespace SickODValueHelper
         /// <returns></returns>
         public string AveragingSpeedStatus()
         {
-            return serialPort.SendCommand("AVG");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("AVG",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -213,9 +259,28 @@ namespace SickODValueHelper
         ///  Medium: Averaging 16 measurement values e 10 ms (15 ms)
         ///  Slow: Averaging 64 measurement values e 35 ms (50 ms)
         ///  </param>
-        public void SetAveragingSpeed(string speed)
+        public void SetAveragingSpeed(int speed)
         {
-            serialPort.SendCommand($"AVG {speed}");
+            string command = string.Empty;
+            switch (speed)
+            {
+                case 0:
+                    command = "AVG FAST";
+                    break;
+
+                case 1:
+                    command = "AVG MEDIUM";
+                    break;
+
+                case 2:
+                    command = "AVG SLOW";
+                    break;
+            }
+
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand(command,
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -224,7 +289,10 @@ namespace SickODValueHelper
         /// <returns>Status of MF as string.</returns>
         public string MultifunctionalInputStatus()
         {
-            return serialPort.SendCommand("MF");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("MF",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -236,20 +304,25 @@ namespace SickODValueHelper
         /// <param name="function"></param>
         public void SetMFFunction(int function)
         {
+            string command = string.Empty;
             switch (function)
             {
                 case 0:
-                    serialPort.SendCommand("MF SR OFF");
+                    command = "MF SR OFF";
                     break;
 
                 case 1:
-                    serialPort.SendCommand("MF SH");
+                    command = "MF SH";
                     break;
 
                 case 2:
-                    serialPort.SendCommand("MF TEACH");
+                    command = "MF TEACH";
                     break;
             }
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand(command,
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -258,7 +331,10 @@ namespace SickODValueHelper
         /// <returns>Status of Alarm as string.</returns>
         public string AlarmStatus()
         {
-            return serialPort.SendCommand("ALARM");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("ALARM",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -269,16 +345,21 @@ namespace SickODValueHelper
         /// <param name="behavior"></param>
         public void SetAlarmBehavior(int behavior)
         {
+            string command = string.Empty;
             switch (behavior)
             {
                 case 0:
-                    serialPort.SendCommand("ALARM CLAMP");
+                    command = "ALARM CLAMP";
                     break;
 
                 case 1:
-                    serialPort.SendCommand("ALARM HOLD");
+                    command = "ALARM HOLD";
                     break;
             }
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand(command,
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -292,7 +373,10 @@ namespace SickODValueHelper
         /// </summary>
         public void ResetSettingsToDefault()
         {
-            serialPort.SendCommand("RESET");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("RESET",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -301,7 +385,10 @@ namespace SickODValueHelper
         /// <returns>Baud rate as string.</returns>
         public string BaudRateStatus()
         {
-            return serialPort.SendCommand("BIT_RATE");
+            return HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand("BIT_RATE",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
 
         /// <summary>
@@ -315,8 +402,40 @@ namespace SickODValueHelper
         /// <param name="baudRate"></param>
         public void SetBaudRate(string baudRate)
         {
-            serialPort.SendCommand($"BIT_RATE {baudRate}");
+            HandleCommandExceptions(() =>
+                CheckValidDeviceResponse(() =>
+                    serialPort.SendCommand($"BIT_RATE {baudRate}",
+                    writeLoggingEnabled: writeLogging, readLoggingEnabled: readLogging)));
         }
+
+        #region Wrapper methods
+
+        private static string CheckValidDeviceResponse(Func<string> commandToSend)
+        {
+            string response = commandToSend();
+            if (response.Contains("?"))
+            {
+                //TODO: Create Custom Exception for device fail
+                throw new Exception("Device returned '?' : Failure");
+            }
+            return response;
+        }
+
+        private static T HandleCommandExceptions<T>(Func<T> fn)
+        {
+            try
+            {
+                return fn();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+            }
+
+            return default;
+        }
+
+        #endregion Wrapper methods
 
         #region test
 
@@ -327,7 +446,11 @@ namespace SickODValueHelper
             {
                 string read = sp2.ReadExisting();
                 Console.WriteLine($"SP2 Received: {read}");
-                if (read.Contains("BIT_RATE"))
+                if (read.Contains("BIT_RATE 41000"))
+                {
+                    toWrite = "\x02" + "?" + "\x03";
+                }
+                else if (read.Contains("BIT_RATE"))
                 {
                     toWrite = "\x02" + "9600" + "\x03";
                 }
@@ -335,6 +458,7 @@ namespace SickODValueHelper
                 {
                     toWrite = "\x02" + "14.2432345" + "\x03";
                 }
+                else { toWrite = read; }
 
                 sp2.Write(toWrite);
                 Console.WriteLine($"SP2 Sent: {toWrite}");
