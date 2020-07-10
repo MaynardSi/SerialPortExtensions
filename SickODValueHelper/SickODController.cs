@@ -19,54 +19,54 @@ namespace SickODValueHelper
 
         public SickODController()
         {
-            InitTest();
+            //InitTest();
         }
 
         #region TEST
 
-        public SerialPort sp2;
+        //public SerialPort sp2;
 
-        public void InitTest()
-        {
-            sp2 = new SerialPort()
-            {
-                PortName = "COM2",
-                BaudRate = 9600,
-                Parity = Parity.None,
-                DataBits = 8,
-                StopBits = StopBits.One,
-                Handshake = Handshake.None,
-                ReadTimeout = 500,
-                WriteTimeout = 500
-            };
-            try
-            {
-                sp2.Open();
-                Log.Information("COM2 OPEN");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+        //public void InitTest()
+        //{
+        //    sp2 = new SerialPort()
+        //    {
+        //        PortName = "COM2",
+        //        BaudRate = 9600,
+        //        Parity = Parity.None,
+        //        DataBits = 8,
+        //        StopBits = StopBits.One,
+        //        Handshake = Handshake.None,
+        //        ReadTimeout = 500,
+        //        WriteTimeout = 500
+        //    };
+        //    try
+        //    {
+        //        sp2.Open();
+        //        Log.Information("COM2 OPEN");
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
 
-            sp2.DataReceived += OnDataReceived2;
-        }
+        //    sp2.DataReceived += OnDataReceived2;
+        //}
 
-        public void OnDataReceived2(object sender, SerialDataReceivedEventArgs e)
-        {
-            try
-            {
-                string read = sp2.ReadExisting();
-                Log.Information($"SP2 Received: {read}");
-                string toWrite = read;
-                sp2.Write(toWrite);
-                Log.Information($"SP2 Sent: {toWrite}");
-            }
-            catch (TimeoutException)
-            {
-                Log.Information("Received: READ MESSAGE TIMEOUT...");
-            }
-        }
+        //public void OnDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        string read = sp2.ReadExisting();
+        //        Log.Information($"SP2 Received: {read}");
+        //        string toWrite = read;
+        //        sp2.Write(toWrite);
+        //        Log.Information($"SP2 Sent: {toWrite}");
+        //    }
+        //    catch (TimeoutException)
+        //    {
+        //        Log.Information("Received: READ MESSAGE TIMEOUT...");
+        //    }
+        //}
 
         #endregion TEST
 
