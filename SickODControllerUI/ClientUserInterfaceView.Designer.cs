@@ -60,7 +60,7 @@
             this.LabelMF = new System.Windows.Forms.Label();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.mfDisplaySettingButton = new System.Windows.Forms.Button();
-            this.mdOnOffToggleButton = new System.Windows.Forms.Button();
+            this.mfOnOffToggleButton = new System.Windows.Forms.CheckBox();
             this.LabelMFFunction = new System.Windows.Forms.Label();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.mfFunctionToExternalTeachButton = new System.Windows.Forms.Button();
@@ -78,14 +78,21 @@
             this.bitRateSetButton = new System.Windows.Forms.Button();
             this.bitRateDisplaySettingButton = new System.Windows.Forms.Button();
             this.LabelGeneralClientSettings = new System.Windows.Forms.Label();
-            this.LabelReadWriteLogging = new System.Windows.Forms.Label();
+            this.LabelControlCharacters = new System.Windows.Forms.Label();
+            this.tableLayoutPanel15 = new System.Windows.Forms.TableLayoutPanel();
+            this.setEndingControlCharacterButton = new System.Windows.Forms.Button();
+            this.setStartControlCharacterButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel13 = new System.Windows.Forms.TableLayoutPanel();
             this.writeControlCharactersToggleButton = new System.Windows.Forms.CheckBox();
             this.trimControlCharactersToggleButton = new System.Windows.Forms.CheckBox();
-            this.LabelControlCharacters = new System.Windows.Forms.Label();
+            this.LabelLogging = new System.Windows.Forms.Label();
             this.tableLayoutPanel14 = new System.Windows.Forms.TableLayoutPanel();
             this.writeLoggingToggleButton = new System.Windows.Forms.CheckBox();
             this.readLoggingToggleButton = new System.Windows.Forms.CheckBox();
+            this.LabelGeneralSettings = new System.Windows.Forms.Label();
+            this.tableLayoutPanel16 = new System.Windows.Forms.TableLayoutPanel();
+            this.PingDeviceButton = new System.Windows.Forms.Button();
+            this.ResetButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
             this.handshakeComboBox = new System.Windows.Forms.ComboBox();
@@ -116,8 +123,10 @@
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.tableLayoutPanel11.SuspendLayout();
+            this.tableLayoutPanel15.SuspendLayout();
             this.tableLayoutPanel13.SuspendLayout();
             this.tableLayoutPanel14.SuspendLayout();
+            this.tableLayoutPanel16.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel12.SuspendLayout();
             this.SuspendLayout();
@@ -156,9 +165,15 @@
             // 
             // logRichTextBox
             // 
+            this.logRichTextBox.BackColor = System.Drawing.SystemColors.MenuText;
+            this.logRichTextBox.DetectUrls = false;
             this.logRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logRichTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.logRichTextBox.ForeColor = System.Drawing.Color.Lime;
+            this.logRichTextBox.HideSelection = false;
             this.logRichTextBox.Location = new System.Drawing.Point(3, 3);
             this.logRichTextBox.Name = "logRichTextBox";
+            this.logRichTextBox.ReadOnly = true;
             this.logRichTextBox.Size = new System.Drawing.Size(715, 448);
             this.logRichTextBox.TabIndex = 3;
             this.logRichTextBox.Text = "";
@@ -216,10 +231,13 @@
             this.clientControlsFlowLayoutPanel.Controls.Add(this.LabelBaudRateSettings);
             this.clientControlsFlowLayoutPanel.Controls.Add(this.tableLayoutPanel11);
             this.clientControlsFlowLayoutPanel.Controls.Add(this.LabelGeneralClientSettings);
-            this.clientControlsFlowLayoutPanel.Controls.Add(this.LabelReadWriteLogging);
-            this.clientControlsFlowLayoutPanel.Controls.Add(this.tableLayoutPanel13);
             this.clientControlsFlowLayoutPanel.Controls.Add(this.LabelControlCharacters);
+            this.clientControlsFlowLayoutPanel.Controls.Add(this.tableLayoutPanel15);
+            this.clientControlsFlowLayoutPanel.Controls.Add(this.tableLayoutPanel13);
+            this.clientControlsFlowLayoutPanel.Controls.Add(this.LabelLogging);
             this.clientControlsFlowLayoutPanel.Controls.Add(this.tableLayoutPanel14);
+            this.clientControlsFlowLayoutPanel.Controls.Add(this.LabelGeneralSettings);
+            this.clientControlsFlowLayoutPanel.Controls.Add(this.tableLayoutPanel16);
             this.clientControlsFlowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.clientControlsFlowLayoutPanel.Location = new System.Drawing.Point(3, 35);
             this.clientControlsFlowLayoutPanel.Name = "clientControlsFlowLayoutPanel";
@@ -478,7 +496,7 @@
             this.button8.TabIndex = 4;
             this.button8.Text = "Fast";
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.button8.Click += new System.EventHandler(this.averagingSetSpeedToFastButton_Click);
             // 
             // averagingSetSpeedToMediumButton
             // 
@@ -518,7 +536,7 @@
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.Controls.Add(this.mfDisplaySettingButton, 0, 0);
-            this.tableLayoutPanel9.Controls.Add(this.mdOnOffToggleButton, 0, 0);
+            this.tableLayoutPanel9.Controls.Add(this.mfOnOffToggleButton, 0, 0);
             this.tableLayoutPanel9.Location = new System.Drawing.Point(0, 474);
             this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -534,21 +552,23 @@
             this.mfDisplaySettingButton.Location = new System.Drawing.Point(104, 3);
             this.mfDisplaySettingButton.Name = "mfDisplaySettingButton";
             this.mfDisplaySettingButton.Size = new System.Drawing.Size(96, 49);
-            this.mfDisplaySettingButton.TabIndex = 17;
+            this.mfDisplaySettingButton.TabIndex = 19;
             this.mfDisplaySettingButton.Text = "Display MF setting";
             this.mfDisplaySettingButton.UseVisualStyleBackColor = true;
             this.mfDisplaySettingButton.Click += new System.EventHandler(this.mfDisplaySettingButton_Click);
             // 
-            // mdOnOffToggleButton
+            // mfOnOffToggleButton
             // 
-            this.mdOnOffToggleButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mdOnOffToggleButton.Location = new System.Drawing.Point(3, 3);
-            this.mdOnOffToggleButton.Name = "mdOnOffToggleButton";
-            this.mdOnOffToggleButton.Size = new System.Drawing.Size(95, 49);
-            this.mdOnOffToggleButton.TabIndex = 1;
-            this.mdOnOffToggleButton.Text = "Activate";
-            this.mdOnOffToggleButton.UseVisualStyleBackColor = true;
-            this.mdOnOffToggleButton.Click += new System.EventHandler(this.mdOnOffToggleButton_Click);
+            this.mfOnOffToggleButton.Appearance = System.Windows.Forms.Appearance.Button;
+            this.mfOnOffToggleButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mfOnOffToggleButton.Location = new System.Drawing.Point(3, 3);
+            this.mfOnOffToggleButton.Name = "mfOnOffToggleButton";
+            this.mfOnOffToggleButton.Size = new System.Drawing.Size(95, 49);
+            this.mfOnOffToggleButton.TabIndex = 18;
+            this.mfOnOffToggleButton.Text = "Activate";
+            this.mfOnOffToggleButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.mfOnOffToggleButton.UseVisualStyleBackColor = true;
+            this.mfOnOffToggleButton.CheckedChanged += new System.EventHandler(this.mfOnOffToggleButton_CheckedChanged);
             // 
             // LabelMFFunction
             // 
@@ -747,15 +767,53 @@
             this.LabelGeneralClientSettings.TabIndex = 27;
             this.LabelGeneralClientSettings.Text = "Client Settings";
             // 
-            // LabelReadWriteLogging
+            // LabelControlCharacters
             // 
-            this.LabelReadWriteLogging.AutoSize = true;
-            this.LabelReadWriteLogging.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LabelReadWriteLogging.Location = new System.Drawing.Point(3, 871);
-            this.LabelReadWriteLogging.Name = "LabelReadWriteLogging";
-            this.LabelReadWriteLogging.Size = new System.Drawing.Size(109, 17);
-            this.LabelReadWriteLogging.TabIndex = 28;
-            this.LabelReadWriteLogging.Text = "Control Characters";
+            this.LabelControlCharacters.AutoSize = true;
+            this.LabelControlCharacters.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelControlCharacters.Location = new System.Drawing.Point(3, 871);
+            this.LabelControlCharacters.Name = "LabelControlCharacters";
+            this.LabelControlCharacters.Size = new System.Drawing.Size(105, 17);
+            this.LabelControlCharacters.TabIndex = 30;
+            this.LabelControlCharacters.Text = "ControlCharacters";
+            // 
+            // tableLayoutPanel15
+            // 
+            this.tableLayoutPanel15.ColumnCount = 2;
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel15.Controls.Add(this.setEndingControlCharacterButton, 0, 0);
+            this.tableLayoutPanel15.Controls.Add(this.setStartControlCharacterButton, 0, 0);
+            this.tableLayoutPanel15.Location = new System.Drawing.Point(0, 891);
+            this.tableLayoutPanel15.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.tableLayoutPanel15.Name = "tableLayoutPanel15";
+            this.tableLayoutPanel15.RowCount = 1;
+            this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            this.tableLayoutPanel15.Size = new System.Drawing.Size(203, 55);
+            this.tableLayoutPanel15.TabIndex = 32;
+            // 
+            // setEndingControlCharacterButton
+            // 
+            this.setEndingControlCharacterButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.setEndingControlCharacterButton.Location = new System.Drawing.Point(104, 3);
+            this.setEndingControlCharacterButton.Name = "setEndingControlCharacterButton";
+            this.setEndingControlCharacterButton.Size = new System.Drawing.Size(96, 49);
+            this.setEndingControlCharacterButton.TabIndex = 2;
+            this.setEndingControlCharacterButton.Text = "Set Ending Control Character";
+            this.setEndingControlCharacterButton.UseVisualStyleBackColor = true;
+            this.setEndingControlCharacterButton.Click += new System.EventHandler(this.setEndingControlCharacterButton_Click);
+            // 
+            // setStartControlCharacterButton
+            // 
+            this.setStartControlCharacterButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.setStartControlCharacterButton.Location = new System.Drawing.Point(3, 3);
+            this.setStartControlCharacterButton.Name = "setStartControlCharacterButton";
+            this.setStartControlCharacterButton.Size = new System.Drawing.Size(95, 49);
+            this.setStartControlCharacterButton.TabIndex = 1;
+            this.setStartControlCharacterButton.Text = "Set Starting Control Character";
+            this.setStartControlCharacterButton.UseVisualStyleBackColor = true;
+            this.setStartControlCharacterButton.Click += new System.EventHandler(this.setStartControlCharacterButton_Click);
             // 
             // tableLayoutPanel13
             // 
@@ -764,7 +822,7 @@
             this.tableLayoutPanel13.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel13.Controls.Add(this.writeControlCharactersToggleButton, 0, 0);
             this.tableLayoutPanel13.Controls.Add(this.trimControlCharactersToggleButton, 1, 0);
-            this.tableLayoutPanel13.Location = new System.Drawing.Point(0, 891);
+            this.tableLayoutPanel13.Location = new System.Drawing.Point(0, 952);
             this.tableLayoutPanel13.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.tableLayoutPanel13.Name = "tableLayoutPanel13";
             this.tableLayoutPanel13.RowCount = 1;
@@ -805,15 +863,15 @@
             this.trimControlCharactersToggleButton.UseVisualStyleBackColor = true;
             this.trimControlCharactersToggleButton.CheckedChanged += new System.EventHandler(this.trimControlCharactersToggleButton_CheckedChanged);
             // 
-            // LabelControlCharacters
+            // LabelLogging
             // 
-            this.LabelControlCharacters.AutoSize = true;
-            this.LabelControlCharacters.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LabelControlCharacters.Location = new System.Drawing.Point(3, 949);
-            this.LabelControlCharacters.Name = "LabelControlCharacters";
-            this.LabelControlCharacters.Size = new System.Drawing.Size(99, 17);
-            this.LabelControlCharacters.TabIndex = 30;
-            this.LabelControlCharacters.Text = "General Logging";
+            this.LabelLogging.AutoSize = true;
+            this.LabelLogging.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelLogging.Location = new System.Drawing.Point(3, 1010);
+            this.LabelLogging.Name = "LabelLogging";
+            this.LabelLogging.Size = new System.Drawing.Size(111, 17);
+            this.LabelLogging.TabIndex = 28;
+            this.LabelLogging.Text = "Serial Port Logging";
             // 
             // tableLayoutPanel14
             // 
@@ -822,7 +880,7 @@
             this.tableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel14.Controls.Add(this.writeLoggingToggleButton, 0, 0);
             this.tableLayoutPanel14.Controls.Add(this.readLoggingToggleButton, 1, 0);
-            this.tableLayoutPanel14.Location = new System.Drawing.Point(0, 969);
+            this.tableLayoutPanel14.Location = new System.Drawing.Point(0, 1030);
             this.tableLayoutPanel14.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.tableLayoutPanel14.Name = "tableLayoutPanel14";
             this.tableLayoutPanel14.RowCount = 1;
@@ -862,6 +920,54 @@
             this.readLoggingToggleButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.readLoggingToggleButton.UseVisualStyleBackColor = true;
             this.readLoggingToggleButton.CheckedChanged += new System.EventHandler(this.readLoggingToggleButton_CheckedChanged);
+            // 
+            // LabelGeneralSettings
+            // 
+            this.LabelGeneralSettings.AutoSize = true;
+            this.LabelGeneralSettings.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelGeneralSettings.Location = new System.Drawing.Point(3, 1088);
+            this.LabelGeneralSettings.Name = "LabelGeneralSettings";
+            this.LabelGeneralSettings.Size = new System.Drawing.Size(51, 17);
+            this.LabelGeneralSettings.TabIndex = 33;
+            this.LabelGeneralSettings.Text = "General";
+            // 
+            // tableLayoutPanel16
+            // 
+            this.tableLayoutPanel16.ColumnCount = 2;
+            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel16.Controls.Add(this.PingDeviceButton, 0, 0);
+            this.tableLayoutPanel16.Controls.Add(this.ResetButton, 0, 0);
+            this.tableLayoutPanel16.Location = new System.Drawing.Point(0, 1108);
+            this.tableLayoutPanel16.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.tableLayoutPanel16.Name = "tableLayoutPanel16";
+            this.tableLayoutPanel16.RowCount = 1;
+            this.tableLayoutPanel16.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel16.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            this.tableLayoutPanel16.Size = new System.Drawing.Size(203, 55);
+            this.tableLayoutPanel16.TabIndex = 34;
+            // 
+            // PingDeviceButton
+            // 
+            this.PingDeviceButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PingDeviceButton.Location = new System.Drawing.Point(104, 3);
+            this.PingDeviceButton.Name = "PingDeviceButton";
+            this.PingDeviceButton.Size = new System.Drawing.Size(96, 49);
+            this.PingDeviceButton.TabIndex = 2;
+            this.PingDeviceButton.Text = "Ping Device";
+            this.PingDeviceButton.UseVisualStyleBackColor = true;
+            this.PingDeviceButton.Click += new System.EventHandler(this.PingDeviceButton_Click);
+            // 
+            // ResetButton
+            // 
+            this.ResetButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResetButton.Location = new System.Drawing.Point(3, 3);
+            this.ResetButton.Name = "ResetButton";
+            this.ResetButton.Size = new System.Drawing.Size(95, 49);
+            this.ResetButton.TabIndex = 1;
+            this.ResetButton.Text = "Reset Serial Port and Device";
+            this.ResetButton.UseVisualStyleBackColor = true;
+            this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -1104,13 +1210,13 @@
             this.LabelSerialPortConfig.TabIndex = 0;
             this.LabelSerialPortConfig.Text = "Serial Port Configurations:";
             // 
-            // ClientUserInterface
+            // ClientUserInterfaceView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 571);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "ClientUserInterface";
+            this.Name = "ClientUserInterfaceView";
             this.Text = "OD Value Controller";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -1127,10 +1233,12 @@
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel10.ResumeLayout(false);
             this.tableLayoutPanel11.ResumeLayout(false);
+            this.tableLayoutPanel15.ResumeLayout(false);
             this.tableLayoutPanel13.ResumeLayout(false);
             this.tableLayoutPanel13.PerformLayout();
             this.tableLayoutPanel14.ResumeLayout(false);
             this.tableLayoutPanel14.PerformLayout();
+            this.tableLayoutPanel16.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel12.ResumeLayout(false);
@@ -1171,8 +1279,6 @@
         private System.Windows.Forms.Button averagingSetSpeedToSlowButton;
         private System.Windows.Forms.Label LabelMF;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
-        private System.Windows.Forms.Button mfDisplaySettingButton;
-        private System.Windows.Forms.Button mdOnOffToggleButton;
         private System.Windows.Forms.Label LabelMFFunction;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.Button mfFunctionToExternalTeachButton;
@@ -1204,7 +1310,7 @@
         private System.Windows.Forms.CheckBox startStopControllerToggleButton;
         private System.Windows.Forms.Button alarmSetBehaviorToHoldButton;
         private System.Windows.Forms.Label LabelGeneralClientSettings;
-        private System.Windows.Forms.Label LabelReadWriteLogging;
+        private System.Windows.Forms.Label LabelLogging;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel13;
         private System.Windows.Forms.CheckBox writeControlCharactersToggleButton;
         private System.Windows.Forms.CheckBox trimControlCharactersToggleButton;
@@ -1218,6 +1324,15 @@
         private System.Windows.Forms.ComboBox parityComboBox;
         private System.Windows.Forms.ComboBox baudRateComboBox;
         private System.Windows.Forms.ComboBox portComboBox;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel15;
+        private System.Windows.Forms.Button setEndingControlCharacterButton;
+        private System.Windows.Forms.Button setStartControlCharacterButton;
+        private System.Windows.Forms.Label LabelGeneralSettings;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel16;
+        private System.Windows.Forms.Button PingDeviceButton;
+        private System.Windows.Forms.Button ResetButton;
+        private System.Windows.Forms.Button mfDisplaySettingButton;
+        private System.Windows.Forms.CheckBox mfOnOffToggleButton;
     }
 }
 

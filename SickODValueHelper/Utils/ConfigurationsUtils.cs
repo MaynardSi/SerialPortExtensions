@@ -18,9 +18,8 @@ namespace SickODValueHelper.Utils
         /// the SerialPort config group.</returns>
         public static NameValueCollection GetDeviceSerialPortConfiguration(string device)
         {
-            NameValueCollection DeviceSerialPortConfig =
-                ConfigurationManager.GetSection($"DeviceGroup/SerialPort/{device}") as NameValueCollection;
-            if (DeviceSerialPortConfig == null || DeviceSerialPortConfig.Count == 0)
+            if (!(ConfigurationManager.GetSection($"DeviceGroup/SerialPort/{device}")
+                is NameValueCollection DeviceSerialPortConfig) || DeviceSerialPortConfig.Count == 0)
             {
                 throw new Exception("Device Serial Port Configurations are not defined");
             }

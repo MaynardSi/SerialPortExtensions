@@ -14,5 +14,7 @@ namespace SickODControllerUI
         public int Databits { get; set; }
         public StopBits Stopbits { get; set; }
         public Handshake @Handshake { get; set; }
+        public int ReadTimeout { get; set; }
+        public int WriteTimeout { get; set; }
     }
 }

@@ -32,7 +32,6 @@ namespace SerialPortExtension
         {
             byte[] buffer = new byte[1];
             string responseBuffer = string.Empty;
-            string response = string.Empty;         // The final response to return
 
             // Read available stream per byte and convert to char to be
             // added onto the response string. Once a terminating character
@@ -43,6 +42,7 @@ namespace SerialPortExtension
                 responseBuffer += _serialPort.Encoding.GetString(buffer);
                 if (responseBuffer.EndsWith(_serialPort.NewLine) || responseBuffer.EndsWith(endControlChar))
                 {
+                    string response;
                     if (trimResponseControlChars)
                     {
                         response = responseBuffer.Substring(startControlChar.Length, responseBuffer.Length - (endControlChar.Length + 1));
@@ -176,7 +176,6 @@ namespace SerialPortExtension
         {
             byte[] buffer = new byte[1];
             string responseBuffer = string.Empty;
-            string response = string.Empty;         // The final response to return
 
             // Read available stream per byte and convert to char to be
             // added onto the response string. Once a terminating character
@@ -187,6 +186,7 @@ namespace SerialPortExtension
                 responseBuffer += _serialPort.Encoding.GetString(buffer);
                 if (responseBuffer.EndsWith(_serialPort.NewLine) || responseBuffer.EndsWith(endControlChar))
                 {
+                    string response;
                     if (trimResponseControlChars)
                     {
                         response = responseBuffer.Substring(startControlChar.Length, responseBuffer.Length - (endControlChar.Length + 1));
@@ -235,12 +235,10 @@ namespace SerialPortExtension
             )
         {
             // Write
-            HandleSerialPortExceptions(() => _serialPort.WriteToBuffer(command, startControlChar,
-                endControlChar, writeControlChar, writeLoggingEnabled), "COMMAND WRITE");
+            _serialPort.WriteToBuffer(command, startControlChar, endControlChar, writeControlChar, writeLoggingEnabled);
 
             // Read
-            return HandleSerialPortExceptions(() => _serialPort.ReadFromBuffer(startControlChar,
-                endControlChar, trimResponseControlChars, readLoggingEnabled), "RESPONSE READ");
+            return _serialPort.ReadFromBuffer(startControlChar, endControlChar, trimResponseControlChars, readLoggingEnabled);
         }
 
         public static async Task<List<string>> SendCommands(this SerialPort _serialPort,
@@ -264,81 +262,5 @@ namespace SerialPortExtension
         }
 
         #endregion Sync Methods
-
-        #region Wrapper Methods
-
-        /// <summary>
-        /// Try Catch wrapper for common serial port exceptions for methods
-        /// that returns a value.
-        /// HandleSerialPortExceptions(() => fn(params..))
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fn"></param>
-        /// <param name="operation"></param>
-        /// <returns></returns>
-        private static T HandleSerialPortExceptions<T>(Func<T> fn, string operation)
-        {
-            try
-            {
-                return fn();
-            }
-            catch (TimeoutException e)
-            {
-                e.Data.Add("OperationError", $"Timeout in operation - {operation}");
-                throw;
-            }
-            catch (IOException e)
-            {
-                e.Data.Add("OperationError", $"IOException in operation - {operation}");
-                throw;
-            }
-            catch (InvalidOperationException e)
-            {
-                e.Data.Add("OperationError", $"InvalidOperationException in operation - {operation}");
-                throw;
-            }
-            catch (Exception e)
-            {
-                e.Data.Add("OperationError", $"Failed operation- {operation}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Try Catch wrapper for common serial port exceptions for methods
-        /// that does not return a value.
-        /// var x = HandleSerialPortExceptions(() => fn(params..))
-        /// </summary>
-        /// <param name="fn"></param>
-        /// <param name="operation"></param>
-        private static void HandleSerialPortExceptions(Action fn, string operation)
-        {
-            try
-            {
-                fn();
-            }
-            catch (TimeoutException e)
-            {
-                e.Data.Add("OperationError", $"Timeout in operation - {operation}");
-                throw;
-            }
-            catch (IOException e)
-            {
-                e.Data.Add("OperationError", $"IOException in operation - {operation}");
-                throw;
-            }
-            catch (InvalidOperationException e)
-            {
-                e.Data.Add("OperationError", $"InvalidOperationException in operation - {operation}");
-                throw;
-            }
-            catch (Exception e)
-            {
-                e.Data.Add("OperationError", $"Failed operation- {operation}");
-                throw;
-            }
-        }
-
-        #endregion Wrapper Methods
     }
 }
