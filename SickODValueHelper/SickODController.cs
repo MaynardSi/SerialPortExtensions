@@ -89,7 +89,6 @@ namespace SickODValueHelper
             catch (Exception)
             {
                 return false;
-                throw;
             }
             return true;
         }
@@ -103,7 +102,6 @@ namespace SickODValueHelper
             catch (Exception)
             {
                 return false;
-                throw;
             }
             return true;
         }
